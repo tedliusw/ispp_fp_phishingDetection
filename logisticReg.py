@@ -22,7 +22,7 @@ def main():
   Y = Y.replace("phishing", 1)
 
   X_train, X_test, y_train, y_test = train_test_split(X, Y, shuffle = True, test_size=0.2)
-  lgc1 = LogisticRegression(solver="newton-cg")
+  lgc1 = LogisticRegression(solver="liblinear")
   lgc1.fit(X_train, y_train)
   y_pred = lgc1.predict(X_test)
   print(metrics.accuracy_score(y_test, y_pred))
