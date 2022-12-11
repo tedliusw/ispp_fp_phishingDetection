@@ -14,8 +14,6 @@ from sklearn import metrics
 def main(): 
   print('Running Logistic Regression')
   ds = pd.read_csv("./dataset/dataset_phishing.csv")
-  ds.head(0)
-  websites = list(ds.iloc[:, 0])
   col_names = list(range(1, 88))
   X = ds.iloc[:, col_names]
   Y = ds.iloc[:, 88]
@@ -28,6 +26,7 @@ def main():
   y_pred = lgc1.predict(X_test)
   print(metrics.accuracy_score(y_test, y_pred))
   if len(sys.argv[1:]) > 0:
+    websites = list(ds.iloc[:, 0])
     y_test, y_pred = list(y_test), list(y_pred)
     false_positive = []
     false_negative = []
