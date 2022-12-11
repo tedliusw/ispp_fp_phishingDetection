@@ -25,6 +25,8 @@ def main():
   lgc1.fit(X_train, y_train)
   y_pred = lgc1.predict(X_test)
   print(metrics.accuracy_score(y_test, y_pred))
+
+
   if len(sys.argv[1:]) > 0:
     websites = list(ds.iloc[:, 0])
     y_test, y_pred = list(y_test), list(y_pred)
@@ -38,7 +40,23 @@ def main():
     
     print("False Positive: ", false_positive, len(false_positive)/len(y_test))
     print("False Negative: ", false_negative, len(false_negative)/len(y_test))
-      
+
+  lgc = LogisticRegression(solver="liblinear", max_iter=2500)
+  cv = ShuffleSplit(n_splits=10, test_size=0.2, train_size=None)
+  score = 0
+  accuracy = 0
+  for i in range(10):
+    score += cross_val_score(lgc, X, Y, cv=cv, scoring='f1').mean()
+    accuracy += cross_val_score(lgc, X, Y, cv=cv, scoring='accuracy').mean()
+  score = score/10
+  accuracy = accuracy/10
+
+  print('Acu: ',accuracy)
+  # print(accuracy.mean())
+  print('f1: ',score)
+  # print(scores.mean())
+
+
 
 if __name__ == "__main__": 
   main()

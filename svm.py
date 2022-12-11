@@ -1,13 +1,16 @@
 import numpy as np 
 import pandas as pd
 
+import matplotlib.pyplot as plt
+import matplotlib
+
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import ShuffleSplit
-
+from sklearn.metrics import confusion_matrix
 
 from sklearn import metrics
 
@@ -21,15 +24,28 @@ def main():
   Y = ds.iloc[:, 88]
   Y = Y.replace("legitimate", 0)
   Y = Y.replace("phishing", 1)
-  print(Y)
+  # print(Y)
 
   X_train, X_test, y_train, y_test = train_test_split(X, Y, shuffle = True, test_size=0.2)
-  clf1 = make_pipeline(StandardScaler(), SVC(kernel='sigmoid', gamma='auto'))
+  clf1 = make_pipeline(StandardScaler(), SVC(kernel='rbf', gamma='auto'))
   clf1.fit(X_train, y_train)
   y_pred = clf1.predict(X_test)
   print(metrics.accuracy_score(y_test, y_pred))
 
-  clf = make_pipeline(StandardScaler(), SVC(kernel='sigmoid', gamma='auto'))
+  conf_matrix=confusion_matrix(y_test, y_pred)
+  fig, ax = plt.subplots(figsize=(7.5, 7.5))
+  ax.matshow(conf_matrix, cmap=plt.cm.Blues, alpha=0.3)
+  for i in range(conf_matrix.shape[0]):
+      for j in range(conf_matrix.shape[1]):
+          ax.text(x=j, y=i,s=conf_matrix[i, j], va='center', ha='center', size='xx-large')
+  
+  plt.xlabel('Predictions', fontsize=18)
+  plt.ylabel('Actuals', fontsize=18)
+  plt.title('Confusion Matrix', fontsize=18)
+  plt.show()
+
+
+  clf = make_pipeline(StandardScaler(), SVC(kernel='rbf', gamma='auto'))
   cv = ShuffleSplit(n_splits=10, test_size=0.2, train_size=None)
   score = 0
   accuracy = 0

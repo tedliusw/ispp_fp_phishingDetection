@@ -8,7 +8,7 @@ import matplotlib
 
 from sklearn.model_selection import train_test_split
 
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import ShuffleSplit
 # from sklearn.model_selection import StratifiedKFold
@@ -19,7 +19,7 @@ from sklearn import metrics
 from sklearn.metrics import confusion_matrix
 
 def main():
-  print("Running Random Forest")
+  print("Running Decision Tree")
   ds = pd.read_csv("./dataset/dataset_phishing.csv")
   ds.head(0)
   websites = list(ds.iloc[:, 0])
@@ -30,11 +30,9 @@ def main():
   Y = Y.replace("phishing", 1)
 
   X_train, X_test, y_train, y_test = train_test_split(X, Y, shuffle = True, test_size=0.2)
-  rfc1 = RandomForestClassifier(n_estimators=900, 
-                             max_depth=20,
-                             random_state=42)
-  rfc1.fit(X_train, y_train)
-  y_pred = rfc1.predict(X_test)
+  clf1 = DecisionTreeClassifier()
+  clf1.fit(X_train, y_train)
+  y_pred = clf1.predict(X_test)
   print(metrics.accuracy_score(y_test, y_pred))
 
   conf_matrix=confusion_matrix(y_test, y_pred)
@@ -63,15 +61,13 @@ def main():
     print("False Positive: ", false_positive, len(false_positive)/len(y_test))
     print("False Negative: ", false_negative, len(false_negative)/len(y_test))
 
-  rfc = RandomForestClassifier(n_estimators=500, 
-                             max_depth=9,
-                             random_state=42)
+  clf = DecisionTreeClassifier()
   cv = ShuffleSplit(n_splits=10, test_size=0.2, train_size=None)
   score = 0
   accuracy = 0
   for i in range(10):
-    score += cross_val_score(rfc, X, Y, cv=cv, scoring='f1').mean()
-    accuracy += cross_val_score(rfc, X, Y, cv=cv, scoring='accuracy').mean()
+    score += cross_val_score(clf, X, Y, cv=cv, scoring='f1').mean()
+    accuracy += cross_val_score(clf, X, Y, cv=cv, scoring='accuracy').mean()
   score = score/10
   accuracy = accuracy/10
 
